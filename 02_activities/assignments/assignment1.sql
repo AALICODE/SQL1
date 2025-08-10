@@ -33,7 +33,7 @@ WHERE product_id = 4
 /*2. Write a query that returns all customer purchases and a new calculated column 'price' (quantity * cost_to_customer_per_qty), 
 filtered by vendor IDs between 8 and 10 (inclusive) using either:
 	1.  two conditions using AND
-	2.  one condition using BETWEEN
+	2.  one condition using BETWEEN.
 */
 -- option 1
 SELECT *,
