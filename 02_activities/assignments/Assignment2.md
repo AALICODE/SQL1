@@ -54,7 +54,102 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
 ```
-Your answer...
+Model for a Small Bookstore
+
+Employee
+employee_id
+first_name
+last_name
+position
+hire_date
+salary
+
+Customer
+customer_id
+first_name
+last_name
+email
+phone
+
+Book
+book_id
+title
+author
+ISBN
+genre
+price
+publication_date
+
+Order
+order_id (PK)
+customer_id (FK → Customer.customer_id)
+employee_id (FK → Employee.employee_id)
+order_date (FK → Date.date_id)
+total_amount
+
+Order_Detail
+order_detail_id (PK)
+order_id (FK → Order.order_id)
+book_id (FK → Book.book_id)
+quantity
+unit_price
+
+Sales
+sale_id (PK)
+order_id (FK → Order.order_id)
+payment_date (FK → Date.date_id)
+payment_type
+amount
+
+Date
+date_id (PK)
+calendar_date
+year
+month
+quarter
+weekday
+is_holiday
+
+Relationships:
+One customer can place many orders.
+One order can have many order_details.
+One book can appear in many order_details.
+One employee processes many orders.
+Date connects to both orders and sales.
+
+Adding Employee Shifts with Morning & Evening Shifts:
+Shift
+shift_id (PK)
+shift_name 
+start_time
+end_time
+
+Employee_Shift 
+employee_id (FK → Employee.employee_id)
+shift_id (FK → Shift.shift_id)
+date_id (FK → Date.date_id)
+
+Overwrite Model 
+customer_id (FK → Customer.customer_id)
+street
+city
+province
+postal_code
+country
+
+History Retention Model
+customer_address_id (PK)
+customer_id (FK → Customer.customer_id)
+street
+city
+province
+postal_code
+country
+effective_date
+end_date
+is_current
+
+Overwrite Model is Type 1 and Retain Changes is Type 2
 ```
 
 ***
@@ -76,9 +171,7 @@ Steps to complete this part of the assignment:
 
 Using the following syntax you create our super cool and not at all needy manager a list:
 ```
-SELECT 
-product_name || ', ' || product_size|| ' (' || product_qty_type || ')'
-FROM product
+
 ```
 
 But wait! The product table has some bad data (a few NULL values). 
