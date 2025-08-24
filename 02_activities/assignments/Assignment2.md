@@ -53,6 +53,9 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 
 **HINT:** search type 1 vs type 2 slowly changing dimensions. 
 
+Overwrite Model is Type 1 and Retain Changes is Type 2
+Overwrite Model is to replace existing model and Retain Changes is keeping and updating existing system.
+
 ```
 Model for a Small Bookstore
 
