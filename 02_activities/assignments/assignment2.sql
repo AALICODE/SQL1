@@ -90,7 +90,7 @@ WHERE INSTR(product_name, '-') > 0;
 /* 2. Filter the query to show any product_size value that contain a number with REGEXP. */
 
 SELECT *
-FROM products
+FROM product
 WHERE product_size REGEXP '[0-9]';
 
 
@@ -149,9 +149,9 @@ Before your final group by you should have the product of those two queries (x*y
 
 WITH customer_count AS (
     SELECT COUNT(*) AS num_customers
-    FROM customers
-),
-vendor_products AS (
+    FROM customer
+)
+, vendor_products AS (
     SELECT 
         v.vendor_id,
         v.vendor_name,
@@ -159,8 +159,8 @@ vendor_products AS (
         p.product_name,
         vi.original_price
     FROM vendor_inventory vi
-    JOIN vendors v ON vi.vendor_id = v.vendor_id
-    JOIN products p ON vi.product_id = p.product_id
+    JOIN vendor v ON vi.vendor_id = v.vendor_id
+    JOIN product p ON vi.product_id = p.product_id
     GROUP BY v.vendor_id, v.vendor_name, p.product_id, p.product_name, vi.original_price
 )
 
@@ -180,10 +180,13 @@ This table will contain only products where the `product_qty_type = 'unit'`.
 It should use all of the columns from the product table, as well as a new column for the `CURRENT_TIMESTAMP`.  
 Name the timestamp column `snapshot_timestamp`. */
 
+DROP TABLE IF EXISTS product_units;
+
 CREATE TABLE product_units AS
-SELECT *, CURRENT_TIMESTAMP AS snapshot_timestamp
-FROM product
-WHERE product_qty_type = 'unit';
+SELECT p.*,
+       CURRENT_TIMESTAMP AS snapshot_timestamp
+FROM product p
+WHERE p.product_qty_type = 'unit';
 
 
 /*2. Using `INSERT`, add a new row to the product_units table (with an updated timestamp). 
@@ -222,21 +225,20 @@ Finally, make sure you have a WHERE statement to update the right row,
 	you'll need to use product_units.product_id to refer to the correct row within the product_units table. 
 When you have all of these components, you can run the update statement. */
 
-ALTER TABLE product_units
-ADD current_quantity INT;
+ALTER TABLE product_units ADD COLUMN current_quantity INTEGER DEFAULT 0;
 
-UPDATE product_units pu
+UPDATE product_units
 SET current_quantity = (
   SELECT COALESCE(vi.quantity, 0)
   FROM vendor_inventory vi
-  WHERE vi.product_id = pu.product_id
-  ORDER BY vi.update_date DESC
+  WHERE vi.product_id = product_units.product_id
+  ORDER BY vi.market_date DESC
   LIMIT 1
 )
 WHERE EXISTS (
   SELECT 1
   FROM vendor_inventory vi
-  WHERE vi.product_id = pu.product_id
+  WHERE vi.product_id = product_units.product_id
 );
 
 
